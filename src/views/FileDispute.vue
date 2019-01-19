@@ -1,22 +1,27 @@
 <template>
-    <div class="box">
+    <div class="w-50 center pt5">
         <div class="box-title">File Dispute</div>
         <div>
-            <v-select v-model="chain" :options="chains" label="displayName" placeholder="Chain" class="mb3"/>
+            <v-select v-model="chain" :options="chains" label="displayName" placeholder="In what blockchain did the incident occur in?" class="mb4"/>
 
             <div class="mb3">
                 <span>Your Address</span>
-                <input class="text-input" style="width: 100%" v-model="userAddress">
+                <input class="mt2 text-input w-100" v-model="userAddress">
+            </div>
+
+            <div class="mb3">
+                <span>Proof of Address Ownership</span>
+                <input class="mt2 text-input w-100" :value="addressProof" @input="_ => this.addressProof = proof()" />
             </div>
 
             <div class="mb3">
                 <span>Scammer's Address</span>
-                <input class="text-input" style="width: 100%" v-model="scammerAddress">
+                <input class="mt2 text-input w-100" v-model="scammerAddress">
             </div>
 
             <span>Description</span>
 
-            <markdown-editor v-model="description" ref="markdownEditor"></markdown-editor>
+            <markdown-editor v-model="description" ref="markdownEditor" class="mt2"></markdown-editor>
 
             <button
                     class="f6 link dim br3 ph3 pv2 mb2 dib white bg-light-purple"
@@ -60,10 +65,18 @@
                 );
             }
         },
+        methods: {
+            proof() {
+                const s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                const N = 64;
+                return Array(N).join().split(',').map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+            },
+        },
         data() {
             return {
                 userAddress: "",
                 scammerAddress: "",
+                addressProof: "",
                 description: "",
                 doingSubmit: false,
                 chain: null,
