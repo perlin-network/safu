@@ -79,7 +79,8 @@ struct Account {
     reputation_received: Vec<Reputation>,
 }
 
-const UPGRADE_TO_VIP_MINIMUM_REPUTATION: i32 = 20;
+const UPGRADE_TO_VIP_MINIMUM_REPUTATION: i64 = 20;
+const UPGRADE_TO_VIP_PERLS_COST: i64 = 1000;
 
 #[no_mangle]
 fn handle_activation() {
@@ -172,8 +173,13 @@ fn handle_activation() {
                                     .fold(0, |sum, val| {
                                         sum + (if val.effect == ReputationEffect::Positive { 1 } else { -1 })
                                     }) >= UPGRADE_TO_VIP_MINIMUM_REPUTATION {
-                                    account.role = Role::VIP;
-                                    account_save(&sender, &account);
+
+                                    if account.balance as i64 > UPGRADE_TO_VIP_PERLS_COST {
+                                        account.role = Role::VIP;
+                                        account.balance = (account.balance as i64 - UPGRADE_TO_VIP_PERLS_COST) as u64;
+
+                                        account_save(&sender, &account);
+                                    }
                                 }
                             }
                         }
