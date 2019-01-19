@@ -13,11 +13,11 @@
         <div class="cf w-100">
             <div class="fl w-25 pr2">
                 <div class="outline bg-white">
-                    <div class="tc pb2" style="min-height: 375.35px">
+                    <div class="tc" style="min-height: 375.35px">
                         <img src="http://lorempixel.com/512/512/nature"/>
                     </div>
 
-                    <div class="pb3">
+                    <div class="pb3 ma3">
                         <code class="f7 w-100 h-25 nowrap fl bg-black-20 pa2 ws-normal overflow-hidden dib">{{this.$store.state.address}}</code>
                     </div>
 
