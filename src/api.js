@@ -41,7 +41,8 @@ class MockAPI {
         console.log(dispute);
     }
 
-    async reputationRecords() {
+    async reputationRecords(targetAddress) {
+        console.log(targetAddress);
         return [
             {
                 id: 1,

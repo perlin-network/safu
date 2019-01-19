@@ -3,7 +3,7 @@
     <div class="ma5">
       <div class="f2 pb3">Reputation</div>
       <div class="pb3">
-        Total reputation:
+        Total reputation for account {{ this.$props.targetAddress }}:
         <span
           v-if="currentRep !== null"
           :style="{color: currentRep >= 0 ? 'green' : 'red'}"
@@ -44,7 +44,8 @@ import api from "../api.js";
 export default {
   components: { Popup },
   props: {
-    close: Function
+    close: Function,
+    targetAddress: String
   },
   data() {
     return {
@@ -53,7 +54,7 @@ export default {
     };
   },
   async mounted() {
-    this.repRecords = await api.reputationRecords();
+    this.repRecords = await api.reputationRecords(this.$props.targetAddress);
     this.currentRep = 0;
 
     for (let rec of this.repRecords) {
