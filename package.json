@@ -16,6 +16,7 @@
     "npm": "^6.6.0",
     "sweetalert2": "^8.0.0",
     "tachyons": "^4.11.1",
+    "tweetnacl": "^1.0.0",
     "vue": "^2.5.21",
     "vue-markdown": "^2.2.4",
     "vue-router": "^3.0.1",

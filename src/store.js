@@ -1,239 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import _ from 'lodash'
+import nacl from 'tweetnacl';
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
     state: {
-        address: "0x71e6c9b83a7ef02bae6764991eefe53360a0a09be53887b2d3900d02c00a3858",
+        address: "",
+        account: {
+            balance: 0, role: "Member", reputation_received: []
+        },
         reports: [
             {
                 id: "0",
                 title: "help! i got scamedz",
                 severity: "LOW",
-                content: `# h1 Heading 8-)
-<h2> h2 Heading by HTML</h2>
-## h2 Heading
-### h3 Heading
-
-## Horizontal Rules
-
-___
-
----
-
-***
-
-## Typographic replacements
-
-Enable typographer option to see result.
-
-(c) (C) (r) (R) (tm) (TM) (p) (P) +-
-
-test.. test... test..... test?..... test!....
-
-!!!!!! ???? ,,  -- ---
-
-"Smartypants, double quotes" and 'single quotes'
-
-
-## Emphasis
-
-**This is bold text**
-
-__This is bold text__
-
-*This is italic text*
-
-_This is italic text_
-
-~~Strikethrough~~
-
-
-## Blockquotes
-
-
-> Blockquotes can also be nested...
->> ...by using additional greater-than signs right next to each other...
-> > > ...or with spaces between arrows.
-
-
-## Lists
-
-Unordered
-
-+ Create a list by starting a line with \`+\`, \`-\`, or \`*\`
-+ Sub-lists are made by indenting 2 spaces:
-  - Marker character change forces new list start:
-    * Ac tristique libero volutpat at
-    + Facilisis in pretium nisl aliquet
-    - Nulla volutpat aliquam velit
-+ Very easy!
-
-Ordered
-
-1. Lorem ipsum dolor sit amet
-2. Consectetur adipiscing elit
-3. Integer molestie lorem at massa
-
-
-1. You can use sequential numbers...
-1. ...or keep all the numbers as \`1.\`
-
-Start numbering with offset:
-
-57. foo
-1. bar
-
-
-## Code
-
-Inline \`code\`
-
-Indented code
-
-    // Some comments
-    line 1 of code
-    line 2 of code
-    line 3 of code
-
-
-Block code "fences"
-
-\`\`\`
-Sample text here...
-\`\`\`
-Syntax highlighting
-
-\`\`\` javascript
-var foo = function (bar) {
-  return bar++;
-};
-
-console.log(foo(5));
-\`\`\`
-
-\`\`\` go
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("Hello, world!")
-}
-\`\`\`
-
-## Tables
-
-| Option | Description |
-| ------ | ----------- |
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
-| ext    | extension to be used for dest files. |
-
-Right aligned columns
-
-| Option | Description |
-| ------:| -----------:|
-| data   | path to data files to supply the data that will be passed into templates. |
-| engine | engine to be used for processing templates. Handlebars is the default. |
-| ext    | extension to be used for dest files. |
-
-## Links
-
-[vue-markdown](https://github.com/miaolz123/vue-markdown)
-
-[link with title](https://github.com/miaolz123/vue-markdown "VueMarkdown")
-
-Autoconverted link https://github.com/miaolz123/vue-markdown (enable linkify to see)
-
-
-## Images
-
-![Minion](dist/img/minion.png)
-
-Like links, Images also have a footnote style syntax
-
-![Alt text][id]
-
-With a reference later in the document defining the URL location:
-
-[id]: dist/img/minion.png  "The Dojocat"
-
-
-### Emojies
-
-> Classic markup: :wink: :cry: :laughing: :yum:
->
-> Shortcuts (emoticons): :-) :-( 8-) ;)
-
-
-### Subscript / Superscript
-
-- 19^th^
-- H~2~O
-
-
-### \\<ins>
-
-++Inserted text++
-
-
-### \\<mark>
-
-==Marked text==
-
-
-### Footnotes
-
-Footnote 1 link[^first].
-
-Footnote 2 link[^second].
-
-Inline footnote^[Text of inline footnote] definition.
-
-Duplicated footnote reference[^second].
-
-[^first]: Footnote **can have markup**
-
-    and multiple paragraphs.
-
-[^second]: Footnote text.
-
-
-### Definition lists
-
-Term 1
-
-:   Definition 1
-with lazy continuation.
-
-Term 2 with *inline markup*
-
-:   Definition 2
-
-        { some code, part of Definition 2 }
-
-    Third paragraph of definition 2.
-
-_Compact style:_
-
-Term 1
-  ~ Definition 1
-
-Term 2
-  ~ Definition 2a
-  ~ Definition 2b
-
-
-### Abbreviations
-
-This is HTML abbreviation example.
-
-It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
-
-*[HTML]: Hyper Text Markup Language`
+                content: `lalala`
             },
             {
                 id: "1",
@@ -245,12 +28,92 @@ It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
 
     },
     getters: {
-      reportById: state => id => _.find(state.reports, report => report.id === id)
+        reportById: state => id => _.find(state.reports, report => report.id === id),
+        reputation: state => () => _.sumBy(state.account.reputation_received, rep => rep.effect === "positive" ? 1 : -1)
     },
     mutations: {
+        'address.set'(state, address) {
+            state.address = address;
+        },
+        'account.load'(state, account) {
+            console.log(account);
 
+            state.account = account;
+        }
     },
     actions: {
-
+        async login({dispatch, commit}, address) {
+            commit('address.set', address);
+            commit('account.load', await perlin.loadAccount(address));
+        }
     }
-})
+});
+
+class Perlin {
+    contract_id = "C-2e9812cc11880f0301f84225bf5e91ebb52b43efb7a1eaf0586635ee6ce8f139";
+
+    api = {
+        host: location.hostname + ":9000",
+        token: ""
+    };
+
+    constructor() {
+        this.keys = nacl.sign.keyPair.fromSecretKey(Buffer.from("6d6fe0c2bc913c0e3e497a0328841cf4979f932e01d2030ad21e649fca8d47fe71e6c9b83a7ef02bae6764991eefe53360a0a09be53887b2d3900d02c00a3858", "hex"));
+
+        this.init().catch(err => console.error(err));
+    }
+
+    async init() {
+        try {
+            await this.initSession();
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    async loadAccount(address) {
+        const res =  JSON.parse(atob((await this.request("/contract/execute", {
+            contract_id: this.contract_id,
+            entry_id: "fetch_account_info",
+            param: btoa(JSON.stringify({
+                account_id: address
+            }))
+        })).result));
+
+        return res;
+    }
+
+    async request(endpoint, body, headers) {
+        const response = await fetch(`http://${this.api.host}${endpoint}`, {
+            method: 'post',
+            headers: {
+                "X-Session-Token": this.api.token,
+                ...headers
+            },
+            body: JSON.stringify(body)
+        })
+
+        return await response.json();
+    }
+
+    async initSession() {
+        const time = new Date().getTime();
+        const auth = nacl.sign.detached(new Buffer(`perlin_session_init_${time}`), this.keys.secretKey)
+
+        const response = await this.request("/session/init", {
+                "public_key": Buffer.from(this.keys.publicKey).toString('hex'),
+                "time_millis": time,
+                "signature": Buffer.from(auth).toString('hex'),
+            }
+        );
+
+        this.api.token = response.token;
+
+        console.log(`Session token: ${this.api.token}`);
+    }
+
+}
+
+const perlin = new Perlin();
+
+export default store;

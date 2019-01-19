@@ -54,27 +54,16 @@
                 loginAccount: null,
                 loginHint: "",
                 doingLogin: false,
-                accounts: [
-                    {
-                        id: "0x7f7f7f7f",
-                        displayName: "(Admin) 0x7f7f7f7f"
-                    }
-                ],
                 async doLogin() {
                     this.doingLogin = true;
-                    try {
-                        let result = await api.login(this.loginAccount.id);
-                        if (result) {
-                            this.loginHint = "OK";
 
-                            this.$router.push("/home");
-                            // window.location = "/home";
-                        } else {
-                            this.loginHint = "Failed";
-                        }
-                    } finally {
-                        this.doingLogin = false;
-                    }
+                    this.loginHint = "OK";
+
+                    await this.$store.dispatch("login", this.loginAccount.id);
+
+                    this.$router.push("/home");
+
+                    this.doingLogin = false;
                 }
             };
         },
@@ -83,7 +72,7 @@
             this.accounts = accounts.map(a => {
                 return {
                     id: a.id,
-                    displayName: `(${a.role}) ${a.id}`
+                    displayName: `(${a.role}) 0x${a.id}`
                 };
             });
             this.loaded = true;

@@ -30,7 +30,7 @@
               </div>
 
               <div class="dtc w-50 pr3 tr">
-                <a href="#" class="f3 black-50 dib" @click="openReputation">300</a>
+                <a href="#" class="f3 black-50 dib" @click="openReputation">{{$store.getters.reputation()}}</a>
               </div>
             </div>
           </div>
