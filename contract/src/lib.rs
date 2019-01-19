@@ -3,7 +3,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate smart_contract;
 
-use smart_contract::activation::CustomActivation;
+use smart_contract::activation::{CustomActivation, TransferActivation};
 use smart_contract::persistent;
 use smart_contract::Reason;
 
@@ -21,9 +21,6 @@ pub enum Payload {
 
     // Normal-only.
     UpgradeToVIP,
-
-    // All.
-    Deposit { amount: u64 },
 
     // Backend-only.
     RegisterScamReport { report_id: String },
@@ -90,6 +87,23 @@ fn handle_activation() {
 
     match reason {
         Some(reason) => match reason.kind.as_str() {
+            "transfer" => {
+                let activation: TransferActivation = match serde_json::from_str(reason.details.get()) {
+                    Ok(v) => v,
+                    Err(_) => return,
+                };
+
+                let sender = reason.sender;
+
+                if !account_load(&sender).is_some() {
+                    account_save(&sender, &Account { balance: 0u64, role: Role::Member, reputation_received: vec![] })
+                }
+
+                let mut account = account_load(&sender).unwrap();
+
+                    account.balance += activation.amount;
+                    account_save(&sender, &account);
+            }
             "custom" => {
                 let activation: CustomActivation<Payload> =
                     match serde_json::from_str(reason.details.get()) {
@@ -162,13 +176,6 @@ fn handle_activation() {
                                     account_save(&sender, &account);
                                 }
                             }
-                        }
-                    }
-
-                    Payload::Deposit { amount } => {
-                        if let Some(mut account) = account_load(&sender) {
-                            account.balance += amount;
-                            account_save(&sender, &account);
                         }
                     }
 
