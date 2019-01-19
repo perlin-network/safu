@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import store from './store'
 import vSelect from "vue-select"
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -15,6 +16,7 @@ Vue.component("v-select", vSelect)
 Vue.component("fa-icon", FontAwesomeIcon)
 
 new Vue({
-  router,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')

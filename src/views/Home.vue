@@ -53,15 +53,15 @@
                                 <option selected class="tl">Sort by...</option>
                             </select>
 
-                            <button class="bg-white pv2 ph5 b--black">File Dispute</button>
+                            <router-link to="/file"><button class="bg-white pv2 ph5 b--black pointer">File Dispute</button></router-link>
                         </div>
                     </nav>
 
-                    <div v-for="report in reports" class="dt w-100 bg-black-10 pa3 b--black bw5" style="border-color: black; border-top: 1px solid black;">
-                        <span class="w-25 dtc f4">{{report.title}}</span>
+                    <div v-for="report in $store.state.reports" class="dt w-100 bg-black-10 pa3 b--black bw5" style="border-color: black; border-top: 1px solid black;">
+                        <span class="w-50 dtc f4"><span class="f5 black-50 mr2">today 3:47PM</span> {{report.title}}</span>
 
-                        <div class="dtc w-75 tr">
-                            <span class="f4 black-50">Severity: {{report.severity}}</span>
+                        <div class="dtc w-50 tr">
+                            <span class="f4 black-50 mr3">Severity: {{report.severity}}</span>
                         </div>
                     </div>
 
@@ -76,20 +76,5 @@
 
     export default {
         name: 'home',
-        data() {
-            return {
-                someText: "bla",
-                reports: [
-                    {
-                        title: "help! i got scamedz",
-                        severity: "LOW"
-                    },
-                    {
-                        title: "Test Title",
-                        severity: "HIGH"
-                    }
-                ]
-            }
-        }
     }
 </script>

@@ -19,13 +19,13 @@ export default new Router({
             component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
         },
         {
-            path: '/login',
+            path: '/',
             name: 'login',
             component: () => import(/* webpackChunkName: "about" */ './views/Login.vue')
         },
         {
-            path: '/dispute',
-            name: 'dispute',
+            path: "/file",
+            name: 'file_dispute',
             component: () => import(/* webpackChunkName: "about" */ './views/FileDispute.vue')
         }
     ]
