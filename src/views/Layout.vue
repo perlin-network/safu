@@ -1,9 +1,9 @@
 <template>
     <div>
         <nav class="dt w-100 border-box pv3">
-            <a class="dtc v-mid black" href="#" title="Home">
+            <router-link class="dtc v-mid black" to="home">
                 <h1 class="dib">SAFU</h1>
-            </a>
+            </router-link>
             <div class="dtc v-mid w-75 tr">
                 <a class="link dim dark-gray f4 mr4 dib" href="#" title="Reports">Reports</a>
                 <a class="link dim dark-gray f4 mr4 dib" href="#" title="Admin CP">Admin CP</a>
@@ -18,7 +18,7 @@
                     </div>
 
                     <div class="pb3">
-                        <code class="f7 w-100 h-25 nowrap fl bg-black-20 pa2 ws-normal overflow-hidden dib">0x71e6c9b83a7ef02bae6764991eefe53360a0a09be53887b2d3900d02c00a3858</code>
+                        <code class="f7 w-100 h-25 nowrap fl bg-black-20 pa2 ws-normal overflow-hidden dib">{{this.$store.state.address}}</code>
                     </div>
 
                     <div class="mt4 mb3 pl3 outline pv3">
@@ -56,6 +56,6 @@
     import "tachyons/css/tachyons.css";
 
     export default {
-        name: 'home',
+        name: 'layout',
     }
 </script>

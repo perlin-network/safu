@@ -8,6 +8,10 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import VueMarkdown from "vue-markdown";
+
+Vue.use(VueMarkdown);
+
 Vue.config.productionTip = false
 
 library.add(faSpinner)
