@@ -36,11 +36,12 @@
 
                     <div class="dt w-100 mt3">
                         <div class="dtc w-20">
-                            <span>Reputation given:</span>
+                            <span>Reputation given ({{reportScore}}):</span>
                         </div>
 
                         <div class="dtc w-80">
-                            <div v-for="(rep, i) in reps" :key="i" class="pa2 mb3 bg-black-10 outline tooltip mr2">
+                            <div v-for="(rep, i) in reps" :key="i" class="pa2 mb3 bg-black-10 outline tooltip mr2"
+                            :class="rep.type === '+' ? ['bg-green', 'white'] : ['bg-light-red', 'white']">
                                 <span class="tooltipText">{{rep.from}} gave {{rep.type}}rep to {{rep.to}}.<br/><b>reason:</b> {{rep.reason}}</span>
                                 {{rep.from}}
                             </div>
@@ -74,6 +75,12 @@
                         to: "bob",
                         type: "+",
                         reason: "good report, very detailed."
+                    },
+                    {
+                        from: "dania",
+                        to: "bob",
+                        type: "-",
+                        reason: "don't agree."
                     }
                 ]
             }
@@ -85,6 +92,10 @@
         computed: {
             report() {
                 return this.$store.getters.reportById(this.$route.query.id);
+            },
+            reportScore() {
+                const score = _.reduce(this.reps, (acc, rep) => acc += rep.type === "+" ? 1 : -1, 0);
+                return score > 0 ? ("+" + score) : score;
             }
         }
     }
