@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100 sans-serif bg-white">
+    <div class="mw9 center sans-serif bg-white">
         <router-view/>
     </div>
 </template>
