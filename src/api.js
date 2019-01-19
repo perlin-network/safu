@@ -40,6 +40,23 @@ class MockAPI {
     async submitDispute(dispute) {
         console.log(dispute);
     }
+
+    async reputationRecords() {
+        return [
+            {
+                id: 1,
+                change: 12,
+                submitter: "0xc0000003",
+                approver: "0xc0000001",
+            },
+            {
+                id: 2,
+                change: -5,
+                submitter: "0xc0000002",
+                approver: "0xc0000001",
+            }
+        ]
+    }
 }
 
 let currentAPI = new MockAPI();
