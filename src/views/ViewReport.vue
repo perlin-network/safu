@@ -35,11 +35,11 @@
                     </div>
 
                     <div class="dt w-100 mt3">
-                        <div class="dtc w-20">
-                            <span>Reputation given ({{reportScore}}):</span>
+                        <div class="dtc w-40">
+                            <span>Reputation given [total report score: {{reportScore}}]:</span>
                         </div>
 
-                        <div class="dtc w-80">
+                        <div class="dtc w-60">
                             <div v-for="(rep, i) in reps" :key="i" class="pa2 mb3 bg-black-10 outline tooltip mr2"
                             :class="rep.type === '+' ? ['bg-green', 'white'] : ['bg-light-red', 'white']">
                                 <span class="tooltipText">{{rep.from}} gave {{rep.type}}rep to {{rep.to}}.<br/><b>reason:</b> {{rep.reason}}</span>
