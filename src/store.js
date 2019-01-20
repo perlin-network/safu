@@ -45,16 +45,16 @@ const store = new Vuex.Store({
         }
     },
     actions: {
-        async login({dispatch, commit}, address) {
+        async login({ dispatch, commit }, address) {
             commit('address.set', address);
             commit('account.load', await perlin.loadAccount(address));
 
             await dispatch('listScamReports');
         },
-        async postScamReport({dispatch, commit}, report) {
+        async postScamReport({ dispatch, commit }, report) {
             await perlin.postScamReport(report);
         },
-        async listScamReports({dispatch, commit}) {
+        async listScamReports({ dispatch, commit }) {
             commit('reports.load', await perlin.listScamReports());
         }
     }
@@ -82,7 +82,7 @@ class Perlin {
     }
 
     async loadAccount(address) {
-        const res =  JSON.parse(atob((await this.waveletRequest("/contract/execute", {
+        const res = JSON.parse(atob((await this.waveletRequest("/contract/execute", {
             contract_id: this.contract_id,
             entry_id: "fetch_account_info",
             param: btoa(JSON.stringify({
@@ -138,10 +138,10 @@ class Perlin {
         const auth = nacl.sign.detached(new Buffer(`perlin_session_init_${time}`), this.keys.secretKey)
 
         const response = await this.waveletRequest("/session/init", {
-                "public_key": Buffer.from(this.keys.publicKey).toString('hex'),
-                "time_millis": time,
-                "signature": Buffer.from(auth).toString('hex'),
-            }
+            "public_key": Buffer.from(this.keys.publicKey).toString('hex'),
+            "time_millis": time,
+            "signature": Buffer.from(auth).toString('hex'),
+        }
         );
 
         this.api.token = response.token;

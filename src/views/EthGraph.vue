@@ -2,7 +2,7 @@
   <div class="w-50 center pt5">
     <div class="box-title">Ethereum Transaction Graph</div>
     <div>
-      <div id="mynetwork" style="height: 600px; margin-top: 100px; width: 500px;"></div>
+      <div id="mynetwork" style="height: 1200px; margin-top: 100px; width: 1000px;"></div>
     </div>
   </div>
 </template>
@@ -10,6 +10,20 @@
 <script>
 import "vue2vis/dist/vue2vis.css";
 import api from "../api.js";
+
+async function safuRequest(endpoint, body, headers) {
+  const response = await fetch(`http://${location.hostname}:5050${endpoint}`, {
+    method: "post",
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  return await response.json();
+}
+
+async function ethTransactionGraph() {
+  return await safuRequest("/eth_graph");
+}
 
 /*
 // create an array with nodes
@@ -37,27 +51,60 @@ import api from "../api.js";
     }},
   ]);
 */
+
+function countChildren(graph, addr, revMap) {
+  let c = 0;
+  if (graph[revMap[addr]].count !== undefined) return graph[revMap[addr]].count;
+  graph[revMap[addr]].count = 0; // cycle
+
+  for (let c in graph[revMap[addr]].children) {
+    c += countChildren(graph, c, revMap);
+  }
+  c += Object.keys(graph[revMap[addr]].children).length;
+
+  graph[revMap[addr]].count = c;
+  return c;
+}
+
+function countToColor(count) {
+  count *= 4096000;
+  count += Math.floor(Math.random() * 10000);
+  let h = count.toString(16);
+  while (h.length < 6) {
+    h = "0" + h;
+  }
+  let ret = "#" + h;
+  console.log(ret);
+  return ret;
+}
+
 export default {
   components: {},
   data() {
     return {};
   },
   async mounted() {
-    let graph = await api.ethTransactionGraph();
+    let graph = await ethTransactionGraph();
+    console.log(graph);
 
     let revMap = {};
+
+    graph.forEach((x, i) => {
+      revMap[x.address] = i;
+    });
+
     let nodes = new vis.DataSet(
       graph.map((x, i) => {
-        revMap[x.address] = i;
         return {
           id: i,
-          label: x.address
+          label: "",
+          color: countToColor(countChildren(graph, x.address, revMap))
         };
       })
     );
     let edges = [];
     for (let n of graph) {
-      for (let c of n.children) {
+      for (let c in n.children) {
         edges.push({
           from: revMap[n.address],
           to: revMap[c],
@@ -73,7 +120,11 @@ export default {
       edges: new vis.DataSet(edges)
     };
 
-    var options = {};
+    var options = {
+      nodes: {
+        size: 5
+      }
+    };
 
     var network = new vis.Network(container, data, options);
   }
