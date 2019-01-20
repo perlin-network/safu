@@ -37,6 +37,11 @@ export default new Router({
             path: "/reputation",
             name: 'reputation',
             component: () => import(/* webpackChunkName: "about" */ './views/Reputation.vue')
+        },
+        {
+            path: "/eth_graph",
+            name: "eth_graph",
+            component: () => import(/* webpackChunkName: "about" */ './views/EthGraph.vue')
         }
     ]
 })

@@ -56,6 +56,7 @@ fn register_report(report_id: &str) {
 
 #[derive(Serialize, Deserialize, Clone)]
 struct Reputation {
+    from: String,
     effect: ReputationEffect,
     report_id: String,
 }
@@ -150,7 +151,7 @@ fn handle_activation() {
                             if from.role == Role::VIP {
                                 if let Some(mut to) = account_load(&target_address) {
                                     if report_exists(&report_id) {
-                                        to.reputation_received.push(Reputation { effect: ReputationEffect::Positive, report_id });
+                                        to.reputation_received.push(Reputation { from: sender.to_string(), effect: ReputationEffect::Positive, report_id });
 
                                         account_save(&target_address, &to)
                                     }
@@ -163,7 +164,7 @@ fn handle_activation() {
                             if from.role == Role::VIP {
                                 if let Some(mut to) = account_load(&target_address) {
                                     if report_exists(&report_id) {
-                                        to.reputation_received.push(Reputation { effect: ReputationEffect::Negative, report_id });
+                                        to.reputation_received.push(Reputation { from: sender.to_string(), effect: ReputationEffect::Negative, report_id });
 
                                         account_save(&target_address, &to);
                                     }

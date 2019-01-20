@@ -24,6 +24,10 @@
               </div>
             </div>
           </div>
+
+          <div class="mt3">
+            <a href="#" @click="resetReputation()">Reset Reputation</a>
+          </div>
         </div>
 
         <div class="fl w-75 pl2">
@@ -34,11 +38,18 @@
           </div>
 
           <div class="dt w-100 mt3">
+            <div class="dtc w-10">
+              <span>
+                <a href="#" class="f6 green" @click="incReputation">+</a> /
+                <a href="#" class="f6 red" @click="decReputation">-</a>
+              </span>
+            </div>
+
             <div class="dtc w-40">
               <span>Reputation given [total report score: {{reportScore}}]:</span>
             </div>
 
-            <div class="dtc w-60">
+            <div class="dtc w-50">
               <div
                 v-for="(rep, i) in reps"
                 :key="i"
@@ -103,7 +114,9 @@ export default {
     },
     closeReputation() {
       this.showReputation = false;
-    }
+    },
+    incReputation() {},
+    decReputation() {}
   },
   components: {
     Layout,

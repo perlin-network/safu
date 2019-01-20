@@ -58,6 +58,31 @@ class MockAPI {
             }
         ]
     }
+
+    async ethTransactionGraph() {
+        return [
+            {
+                address: "#1",
+                parents: [],
+                children: ["#2"]
+            },
+            {
+                address: "#2",
+                parents: ["#1"],
+                children: ["#3", "#4"]
+            },
+            {
+                address: "#3",
+                parents: ["#2"],
+                children: []
+            },
+            {
+                address: "#4",
+                parents: ["#2"],
+                children: []
+            },
+        ]
+    }
 }
 
 let currentAPI = new MockAPI();
