@@ -1,18 +1,12 @@
 class MockAPI {
     constructor() {
         this.mockData = {
-            accounts: [{
-                id: "0xc0000001",
-                role: "admin",
-            },
-            {
-                id: "0xc0000002",
-                role: "vip",
-            },
-            {
-                id: "0xc0000002",
-                role: "normal",
-            }]
+            accounts: [
+                {
+                    id: "71e6c9b83a7ef02bae6764991eefe53360a0a09be53887b2d3900d02c00a3858",
+                    role: "admin",
+                }
+            ]
         }
         this.currentAccount = null;
     }
