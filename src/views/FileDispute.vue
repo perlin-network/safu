@@ -19,6 +19,11 @@
                 <input class="mt2 text-input w-100" v-model="scammerAddress">
             </div>
 
+            <div class="mb3">
+                <span>Title</span>
+                <input class="mt2 text-input w-100" v-model="title">
+            </div>
+
             <span>Description</span>
 
             <markdown-editor v-model="description" ref="markdownEditor" class="mt2"></markdown-editor>
@@ -61,6 +66,7 @@
                     this.scammerAddress &&
                     this.chain &&
                     this.description &&
+                            this.title &&
                     !this.doingSubmit
                 );
             }
@@ -78,6 +84,7 @@
                 scammerAddress: "",
                 addressProof: "",
                 description: "",
+                title: "",
                 doingSubmit: false,
                 chain: null,
                 chains: [
@@ -89,18 +96,21 @@
 
                 async doSubmit() {
                     this.doingSubmit = true;
-                    try {
-                        await api.submitDispute({
-                            userAddress: this.userAddress,
-                            scammerAddress: this.scammerAddress,
-                            description: this.description,
-                            chain: this.chain.id
-                        });
-                        this.scammerAddress = "";
-                        this.description = "";
-                    } finally {
-                        this.doingSubmit = false;
-                    }
+
+                    await this.$store.dispatch('postScamReport', {
+                        timestamp: new Date().getTime(),
+                        account_id: this.$store.state.address,
+                        scammer_address: this.scammerAddress,
+                        victim_address: this.userAddress,
+                        title: this.title,
+                        content: this.description,
+                        proof: this.addressProof,
+                    });
+
+                    this.scammerAddress = "";
+                    this.description = "";
+
+                    this.doingSubmit = false;
                 }
             };
         },

@@ -39,12 +39,23 @@ const store = new Vuex.Store({
             console.log(account);
 
             state.account = account;
+        },
+        'reports.load'(state, reports) {
+            state.reports = reports;
         }
     },
     actions: {
         async login({dispatch, commit}, address) {
             commit('address.set', address);
             commit('account.load', await perlin.loadAccount(address));
+
+            await dispatch('listScamReports');
+        },
+        async postScamReport({dispatch, commit}, report) {
+            await perlin.postScamReport(report);
+        },
+        async listScamReports({dispatch, commit}) {
+            commit('reports.load', await perlin.listScamReports());
         }
     }
 });
@@ -53,7 +64,6 @@ class Perlin {
     contract_id = "C-2e9812cc11880f0301f84225bf5e91ebb52b43efb7a1eaf0586635ee6ce8f139";
 
     api = {
-        host: location.hostname + ":9000",
         token: ""
     };
 
@@ -72,7 +82,7 @@ class Perlin {
     }
 
     async loadAccount(address) {
-        const res =  JSON.parse(atob((await this.request("/contract/execute", {
+        const res =  JSON.parse(atob((await this.waveletRequest("/contract/execute", {
             contract_id: this.contract_id,
             entry_id: "fetch_account_info",
             param: btoa(JSON.stringify({
@@ -83,8 +93,8 @@ class Perlin {
         return res;
     }
 
-    async request(endpoint, body, headers) {
-        const response = await fetch(`http://${this.api.host}${endpoint}`, {
+    async waveletRequest(endpoint, body, headers) {
+        const response = await fetch(`http://${location.hostname}:9000${endpoint}`, {
             method: 'post',
             headers: {
                 "X-Session-Token": this.api.token,
@@ -96,11 +106,38 @@ class Perlin {
         return await response.json();
     }
 
+    async safuRequest(endpoint, body, headers) {
+        const response = await fetch(`http://${location.hostname}:5050${endpoint}`, {
+            method: 'post',
+            headers,
+            body: JSON.stringify(body)
+        })
+
+        return await response.json();
+    }
+
+    async listScamReports() {
+        let reports = (await this.safuRequest('/all_scam_reports')).reports;
+
+        reports = _.map(reports, report => {
+            report.severity = report.taint < 30 ? "LOW" : "HIGH";
+
+            return report;
+        })
+
+        console.log(reports);
+        return reports;
+    }
+
+    async postScamReport(report) {
+        await this.safuRequest("/post_scam_report", report);
+    }
+
     async initSession() {
         const time = new Date().getTime();
         const auth = nacl.sign.detached(new Buffer(`perlin_session_init_${time}`), this.keys.secretKey)
 
-        const response = await this.request("/session/init", {
+        const response = await this.waveletRequest("/session/init", {
                 "public_key": Buffer.from(this.keys.publicKey).toString('hex'),
                 "time_millis": time,
                 "signature": Buffer.from(auth).toString('hex'),
